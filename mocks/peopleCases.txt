@@ -1,0 +1,10 @@
+
+C1:
+- Uses tabs
+- function style: parenthesis and key on same line
+- doesn't import stdlib
+
+C2:
+- Doesn't uses tabs(space in place of tab)
+- function style: parenthesis and key on differente lines
+- imports stdlib
