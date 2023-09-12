@@ -5,9 +5,20 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 import glob
+import os
 
-filesPath = glob.glob(input("Type the path to the training files: ") + "/*/*.cpp")
-filesLabels = [path.split("/")[-2] for path in filesPath]
+if os.name == "posix":
+    
+    path = input("Type the path to the training files: ")
+
+    filesPath = glob.glob(input("Type the path to the training files: ") + "/*/*.cpp")
+    filesLabels = [path.split("/")[-2] for path in filesPath]
+elif os.name == "nt":
+    filesPath = glob.glob(input("Type the path to the training files: ") + "\*\*.cpp")
+    filesLabels = [path.split("\\")[-2] for path in filesPath]
+
+
+
 files = [vectorizeFile(path) for path in filesPath]
 filesData = layoutAnalysis(files)
 
