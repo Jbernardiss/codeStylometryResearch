@@ -1,0 +1,3 @@
+
+Esse dataset contém 10 autores
+A fonte dos códigos é a World Final e round 3 do Code Jam 2022

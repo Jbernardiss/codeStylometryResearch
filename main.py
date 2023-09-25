@@ -6,18 +6,30 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 import glob
 import os
+import sys
+
+
+def printTestsPredicts(y_test, predictedAuthor):
+    print("\n\nTests: ")
+    erros = 0
+    for a, b in zip(y_test, predictedAuthor):
+
+        if a == b:
+            print(f'{a} = {b}: V')
+        if a != b:
+            print(f'{a} != {b}: F')
+            erros += 1
+
+    print(f'Total: {len(y_test)}')
+    print(f'Erros: {erros}')
 
 if os.name == "posix":
-    
-    path = input("Type the path to the training files: ")
-
-    filesPath = glob.glob(input("Type the path to the training files: ") + "/*/*.cpp")
+    filesPath = glob.glob(input("Type the path to the training files: ").replace("'", "") + "/*/*.cpp")
     filesLabels = [path.split("/")[-2] for path in filesPath]
+
 elif os.name == "nt":
-    filesPath = glob.glob(input("Type the path to the training files: ") + "\*\*.cpp")
+    filesPath = glob.glob(input("Type the path to the training files: ").replace("'", "") + "\*\*.cpp")
     filesLabels = [path.split("\\")[-2] for path in filesPath]
-
-
 
 files = [vectorizeFile(path) for path in filesPath]
 filesData = layoutAnalysis(files)
@@ -32,7 +44,9 @@ knn.fit(x_train, y_train)
 
 # Previsão sobre de quem o arquivo misterioso é
 predictedAuthor = knn.predict(x_test)
-print(predictedAuthor)
 
 # Calculo da precisão do modelo
-print(accuracy_score(y_test, predictedAuthor))
+print(f'Accuracy: {accuracy_score(y_test, predictedAuthor) * 100}')
+
+if "-v" in sys.argv:
+    printTestsPredicts(y_test, predictedAuthor)
