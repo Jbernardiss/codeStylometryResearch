@@ -1,9 +1,14 @@
 
 from modules.layout import layoutAnalysis
-from modules.vectorizer import vectorizeFile
+from modules.lexical import lexicalAnalisys
+from modules.vectorizer import vectorizeFileInLines, vectorizeFile
+
+import numpy as np
+
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+
 import glob
 import os
 import sys
@@ -31,8 +36,18 @@ elif os.name == "nt":
     filesPath = glob.glob(input("Type the path to the training files: ").replace("'", "") + "\*\*.cpp")
     filesLabels = [path.split("\\")[-2] for path in filesPath]
 
-files = [vectorizeFile(path) for path in filesPath]
-filesData = layoutAnalysis(files)
+
+vectorizedFilesInLines = [vectorizeFileInLines(path) for path in filesPath]
+vectorizedFilesWhole = [vectorizeFile(path) for path in filesPath]
+
+filesLayoutData = layoutAnalysis(vectorizedFilesInLines)
+filesLexicalData = lexicalAnalisys(vectorizedFilesWhole)
+
+print(filesLayoutData[0])
+print(filesLexicalData[0])
+
+filesData = np.concatenate((filesLayoutData, filesLexicalData), axis=1)
+print(filesData[0])
 
 x_train, x_test, y_train, y_test = train_test_split(filesData, filesLabels, test_size=0.3)
 
