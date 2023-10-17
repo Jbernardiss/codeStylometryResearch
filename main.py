@@ -36,16 +36,16 @@ elif os.name == "nt":
     filesPath = glob.glob(input("Type the path to the training files: ").replace("'", "") + "\*\*.cpp")
     filesLabels = [path.split("\\")[-2] for path in filesPath]
 
-
+# vectorizeFileInLines vectorizes files and separates the lines so each file is represented as list[str] so the total set is list(vectorizedFilesInLines)[list(each file)[str(each line)]]
 vectorizedFilesInLines = [vectorizeFileInLines(path) for path in filesPath]
+# vectorizeFile vectorizes files and each file is represented as str so the total set is list(vectorizedFilesWhole)[str(each file)]
 vectorizedFilesWhole = [vectorizeFile(path) for path in filesPath]
 
+# this generates the data sets for each type of analysis
 filesLayoutData = layoutAnalysis(vectorizedFilesInLines)
 filesLexicalData = lexicalAnalisys(vectorizedFilesWhole)
 
-print(filesLayoutData[0])
-print(filesLexicalData[0])
-
+# this sums the two data sets so each file is represented as a list of features
 filesData = np.concatenate((filesLayoutData, filesLexicalData), axis=1)
 print(filesData[0])
 
