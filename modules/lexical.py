@@ -1,6 +1,7 @@
 
-import io
-from numpy import vectorize
+import math
+import numpy as np
+
 from sklearn.feature_extraction.text import CountVectorizer
 
 CPP_KEYWORDS = [
@@ -101,26 +102,22 @@ CPP_KEYWORDS = [
     "while",
     "xor",
     "xor_eq",
-
 ]
 
-def vectorizeFile(filePath: str) -> str:
 
-    with open(filePath, "rb") as f:
-        file = f.read().decode("utf-8")
+def lexicalAnalisys(files: list[str]) -> np.ndarray:
 
-        return file
+    feats = np.zeros((len(files), 1))
 
 
-def vectorizeFileInLines(filePath: str) -> list[str]:
+    vectorizer = CountVectorizer(vocabulary=CPP_KEYWORDS)
 
-  with open(filePath, "rb") as f:
-        file = f.readlines()
-        file = [line.decode("utf-8") for line in file]
+    X = vectorizer.fit_transform(files)
 
-        return file
+    for i, file in enumerate(files):
+        feats[i, 0] = math.log(X[i].sum()/len(file))
 
-
+    return feats
 
 if __name__ == "__main__":
-    print(vectorizeFile("/Users/Jbernardis/Documents/stylometryResearch/data/dataset-v1/Benq/Benq-a1-2022-worldFinals.cpp"))
+    print(lexicalAnalisys(["int main() { return 0; }"]))
