@@ -1,6 +1,7 @@
 
 import math
 import numpy as np
+import nltk
 
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -104,10 +105,52 @@ CPP_KEYWORDS = [
     "xor_eq",
 ]
 
+CPP_OPERATORS = [
+    #arithmetic operators
+    "=",
+    "+", 
+    "++",  
+    "+=", 
+    "-",
+    "--",
+    "-=",
+    "*",
+    "*=",
+    "/",
+    "/=",
+    "%",
+    "%=",
+    #logical operators
+    "^",
+    "^=",
+    "&",
+    "&=",
+    "|",
+    "|=",
+    "~",
+    #relational operators
+    "<",
+    "<=",
+    ">",
+    ">=",
+    "==",
+    "!=",
+    "!",
+    "&&",
+    "||",
+    "<<",
+    "<<=",
+    ">>",
+    ">>=",
+]
+
+
+
+
 
 def lexicalAnalisys(files: list[str]) -> np.ndarray:
 
-    feats = np.zeros((len(files), 1))
+    feats = np.zeros((len(files), 3))
 
 
     vectorizer = CountVectorizer(vocabulary=CPP_KEYWORDS)
@@ -116,6 +159,20 @@ def lexicalAnalisys(files: list[str]) -> np.ndarray:
 
     for i, file in enumerate(files):
         feats[i, 0] = math.log(X[i].sum()/len(file))
+
+    index = 0
+    for file in files:
+
+        numOperations = 0
+
+        tokens = nltk.word_tokenize(file)
+        for token in tokens:
+            if token in CPP_OPERATORS:
+                numOperations += 1
+
+        feats[index, 1] = math.log(numOperations/len(file))
+        feats[index, 2] = math.log(len(tokens)/len(file))
+        index += 1
 
     return feats
 
