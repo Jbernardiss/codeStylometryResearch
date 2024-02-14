@@ -9,7 +9,7 @@ def layoutAnalysis(files: list[list[str]]) -> np.ndarray:
 
         Info inside the returned matrix:
 
-            0 - A int boolean(0(false), 1(true)) representing the use of tabs or spaces for identation. 1 is for the use of tabs, 0 is
+        0 - A int boolean(0(false), 1(true)) representing the use of tabs or spaces for identation. 1 is for the use of tabs, 0 is
         for the use of spaces.
 
         1 - Log of the number of spaces divided by the file length in characters. Ln(num/len)
@@ -27,8 +27,7 @@ def layoutAnalysis(files: list[list[str]]) -> np.ndarray:
     feats = np.zeros((len(files),5))
 
 
-    index = 0
-    for file in files:
+    for index, file in enumerate(files):
         tabIdent = 0
         spaceCount = 0
         emptyLinesCount = 0
@@ -77,3 +76,8 @@ def layoutAnalysis(files: list[list[str]]) -> np.ndarray:
         index += 1
 
     return feats
+
+if __name__ == "__main__":
+    from vectorizer import vectorizeFileInLines
+    vecFile = vectorizeFileInLines("/Users/Jbernardis/Documents/stylometryResearch/data/dataset-v3/Benq/Benq-a1-2022-r3.cpp")
+    print(layoutAnalysis([vecFile]))
