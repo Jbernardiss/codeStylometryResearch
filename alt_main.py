@@ -10,9 +10,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
+import os
 
 
-DATASET_PATH = "/Users/Jbernardis/Documents/stylometryResearch/data/dataset-v3"
+if os.name == "posix":
+    DATASET_PATH = "./data/dataset-v3/"
+
+elif os.name == "nt":
+    filesPath = ".\\data\\dataset-v3\\"
+
+
 filesPath, filesLabels = getFilesPaths(DATASET_PATH)
 
 vectorizedFilesInLines = [vectorizeFileInLines(path) for path in filesPath]
