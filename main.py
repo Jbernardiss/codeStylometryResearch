@@ -2,6 +2,7 @@
 from modules.layout import layoutAnalysis
 from modules.lexical import lexicalAnalysis
 from modules.vectorizer import vectorizeFileInLines, vectorizeWholeFile
+from modules.misc import getFilesPaths, printTestsPredicts
 
 import numpy as np
 
@@ -12,32 +13,6 @@ from sklearn.metrics import accuracy_score
 import glob
 import os
 import sys
-
-def getFilesPaths(path: str):
-    if os.name == "posix":
-        filesPath = glob.glob(path.replace("'", "") + "/*/*.cpp")
-        filesLabels = [path.split("/")[-2] for path in filesPath]
-        return filesPath, filesLabels
-
-    elif os.name == "nt":
-        filesPath = glob.glob(path.replace("'", "") + "\*\*.cpp")
-        filesLabels = [path.split("\\")[-2] for path in filesPath]
-        return filesPath, filesLabels
-
-
-def printTestsPredicts(y_test, predictedAuthor):
-    print("\n\nTests: ")
-    erros = 0
-    for a, b in zip(y_test, predictedAuthor):
-
-        if a == b:
-            print(f'{a} = {b}: V')
-        if a != b:
-            print(f'{a} != {b}: F')
-            erros += 1
-
-    print(f'Total: {len(y_test)}')
-    print(f'Erros: {erros}')
 
 
 datasetPath = input("Type the path to the training files: ")
@@ -64,12 +39,15 @@ knn = KNeighborsClassifier(metric="cityblock", n_neighbors=1, algorithm="brute")
 knn.fit(x_train, y_train)
 
 
-
 # Previsão sobre de quem o arquivo misterioso é
 predictedAuthor = knn.predict(x_test)
+predictedAuthorProb = knn.predict_proba(x_test)
+
+# Verbose print
+if "-v" in sys.argv:
+    printTestsPredicts(y_test, predictedAuthor)
 
 # Calculo da precisão do modelo
 print(f'Accuracy: {accuracy_score(y_test, predictedAuthor)}')
 
-if "-v" in sys.argv:
-    printTestsPredicts(y_test, predictedAuthor)
+print(predictedAuthorProb)
