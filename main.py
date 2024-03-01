@@ -10,8 +10,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
-import glob
-import os
 import sys
 
 
@@ -41,7 +39,7 @@ knn.fit(x_train, y_train)
 
 # Previsão sobre de quem o arquivo misterioso é
 predictedAuthor = knn.predict(x_test)
-predictedAuthorProb = knn.predict_proba(x_test)
+
 
 # Verbose print
 if "-v" in sys.argv:
@@ -49,5 +47,3 @@ if "-v" in sys.argv:
 
 # Calculo da precisão do modelo
 print(f'Accuracy: {accuracy_score(y_test, predictedAuthor)}')
-
-print(predictedAuthorProb)

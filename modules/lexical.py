@@ -176,6 +176,7 @@ def lexicalAnalysis(files: list[str]) -> np.ndarray:
     keywordVectorizer = CountVectorizer(vocabulary=CPP_KEYWORDS)
     operatorVectorizer = CountVectorizer(ngram_range=(1, 4), analyzer='char', vocabulary=CPP_OPERATORS)
 
+    keywordLabels = keywordVectorizer.get_feature_names_out()
     keywordCount = keywordVectorizer.fit_transform(files)
     keywordCount = keywordCount.toarray()
 
@@ -185,18 +186,17 @@ def lexicalAnalysis(files: list[str]) -> np.ndarray:
 
 
     for i in range(len(files)):
-
-        # print(sum(keywordCount[i]))
-        keywordCountSum = sum(keywordCount[i])
-        # input()
+        
+        # this is needed before counting to clean the keyword double counts
+        keywordLabelsCountDict = dict(zip(keywordLabels, keywordCount[i]))
+        keywordLabelsCountDict = cleanLabelsCountDict(keywordLabelsCountDict)
+        keywordCountSum = sum(list(keywordLabelsCountDict.values()))
 
         # this is needed before counting to clean the operator double counts
-        # print(operatorCount[i])
-        # print(operatorLabels)
-        labelsCountDict = dict(zip(operatorLabels, operatorCount[i]))
-        # print(labelsCountDict)
-        labelsCountDict = cleanLabelsCountDict(labelsCountDict)
-        operatorCountSum = sum(list(labelsCountDict.values()))
+        operatorLabelsCountDict = dict(zip(operatorLabels, operatorCount[i]))
+        operatorLabelsCountDict = cleanLabelsCountDict(operatorLabelsCountDict)
+        operatorCountSum = sum(list(operatorLabelsCountDict.values()))
+        
         # Not at its most efficient state. Detects strings in commented lines
         stringLiteralCountSum = len(re.findall('(?:"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\')', files[i]))
 
@@ -209,8 +209,8 @@ def lexicalAnalysis(files: list[str]) -> np.ndarray:
 
 if __name__ == "__main__":
 
-    vecFile1 = vectorizeWholeFile("/Users/Jbernardis/Documents/stylometryResearch/data/dataset-v3/Snuke/Snuke-a1-2022-worldFinals.cpp")
-    vecFile2 = vectorizeWholeFile("/Users/Jbernardis/Documents/stylometryResearch/data/dataset-v3/Benq/Benq-b1-2022-r3.cpp")
-    vecFile3 = vectorizeWholeFile("/Users/Jbernardis/Documents/stylometryResearch/data/dataset-v3/Benq/Benq-c1-2022-r3.cpp")
+    vecFile1 = vectorizeWholeFile("/home/jbernardis/Projects/codeStylometryResearch/data/dataset-v3/Snuke/Snuke-a1-2022-worldFinals.cpp")
+    vecFile2 = vectorizeWholeFile("/home/jbernardis/Projects/codeStylometryResearch/data/dataset-v3/Benq/Benq-b1-2022-r3.cpp")
+    vecFile3 = vectorizeWholeFile("/home/jbernardis/Projects/codeStylometryResearch/data/dataset-v3/Benq/Benq-c1-2022-r3.cpp")
 
     print(lexicalAnalysis([vecFile1, vecFile2, vecFile3]))
